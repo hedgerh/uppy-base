@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/hedgerh/uppy-thin/issues"
   },
-  "homepage": "https://github.com/hedgerh/uppy-thin#readme"
+  "homepage": "https://github.com/hedgerh/uppy-thin#readme",
+  "dependencies": {
+    "events": "^1.1.1"
+  }
 }

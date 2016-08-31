@@ -1,6 +1,5 @@
-'use strict'
+import Provider from './plugins/GoogleDrive'
+import Webcam from './plugins/Webcam'
 
-module.exports = {
-  Provider: require('./plugins/Provider'),
-  Webcam: require('./plugins/Webcam')
-}
+export Provider
+export Webcam

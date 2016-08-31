@@ -17,6 +17,11 @@
   },
   "homepage": "https://github.com/hedgerh/uppy-thin#readme",
   "dependencies": {
-    "events": "^1.1.1"
+    "events": "^1.1.1",
+    "namespace-emitter": "^1.0.0",
+    "tus-js-client": "^1.2.1"
+  },
+  "devDependencies": {
+    "chokidar-cli": "^1.2.0"
   }
 }

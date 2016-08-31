@@ -1,5 +1,5 @@
-import Provider from './plugins/GoogleDrive'
-import Webcam from './plugins/Webcam'
+import P from './src/plugins/Provider'
+import W from './src/plugins/Webcam'
 
-export Provider
-export Webcam
+export const Provider = P
+export const Webcam = W

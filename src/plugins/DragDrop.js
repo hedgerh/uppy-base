@@ -81,7 +81,7 @@ export default class DragDrop {
 
     files.forEach((file) => {
       handler({
-        source: this.id,
+        source: source || null,
         name: file.name,
         type: file.type,
         data: file

@@ -1,5 +1,5 @@
 import tus from 'tus-js-client'
-import UppySocket from '../core/UppySocket'
+import UppySocket from '../utils/UppySocket'
 import EventEmitter from 'events'
 
 /**

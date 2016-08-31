@@ -1,8 +1,11 @@
+import dataURItoFile from '../utils/dataURItoFile'
+
 /**
  * Webcam Plugin
  */
 export default class Webcam {
-  constructor (opts) {
+  constructor (opts, params) {
+    this._userMedia
     this.userMedia = true
     this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
 
@@ -11,7 +14,7 @@ export default class Webcam {
       enableFlash: true
     }
 
-    this.params = opts.params
+    this.params = params
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
@@ -23,9 +26,11 @@ export default class Webcam {
     // this.startRecording = this.startRecording.bind(this)
     // this.stopRecording = this.stopRecording.bind(this)
     this.takeSnapshot = this.takeSnapshot.bind(this)
-    this.generateImage = this.generateImage.bind(this)
+    this.getImage = this.getImage.bind(this)
     this.getSWFHTML = this.getSWFHTML.bind(this)
     this.detectFlash = this.detectFlash.bind(this)
+    this.getUserMedia = this.getUserMedia.bind(this)
+    this.getMediaDevices = this.getMediaDevices.bind(this)
   }
 
   /**
@@ -33,26 +38,9 @@ export default class Webcam {
    */
   init () {
     // initialize, check for getUserMedia support
+    this.mediaDevices = this.getMediaDevices()
 
-    // Setup getUserMedia, with polyfill for older browsers
-    // Adapted from: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
-    this.mediaDevices = (navigator.mediaDevices && navigator.mediaDevices.getUserMedia)
-      ? navigator.mediaDevices : ((navigator.mozGetUserMedia || navigator.webkitGetUserMedia) ? {
-        getUserMedia: function (c) {
-          return new Promise(function (resolve, reject) {
-            (navigator.mozGetUserMedia ||
-            navigator.webkitGetUserMedia).call(navigator, c, resolve, reject)
-          })
-        }
-      } : null)
-
-    window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL
-    this.userMedia = this.userMedia && !!this.mediaDevices && !!window.URL
-
-    // Older versions of firefox (< 21) apparently claim support but user media does not actually work
-    if (navigator.userAgent.match(/Firefox\D+(\d+)/)) {
-      if (parseInt(RegExp.$1, 10) < 21) this.userMedia = null
-    }
+    this.userMedia = this.getUserMedia(this.mediaDevices)
 
     // Make sure media stream is closed when navigating away from page
     if (this.userMedia) {
@@ -67,42 +55,51 @@ export default class Webcam {
     }
   }
 
+  // Setup getUserMedia, with polyfill for older browsers
+  // Adapted from: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+  getMediaDevices () {
+    return (navigator.mediaDevices && navigator.mediaDevices.getUserMedia)
+      ? navigator.mediaDevices : ((navigator.mozGetUserMedia || navigator.webkitGetUserMedia) ? {
+        getUserMedia: function (opts) {
+          return new Promise(function (resolve, reject) {
+            (navigator.mozGetUserMedia ||
+            navigator.webkitGetUserMedia).call(navigator, opts, resolve, reject)
+          })
+        }
+      } : null)
+  }
+
+  getUserMedia (mediaDevices) {
+    const userMedia = true
+    // Older versions of firefox (< 21) apparently claim support but user media does not actually work
+    if (navigator.userAgent.match(/Firefox\D+(\d+)/)) {
+      if (parseInt(RegExp.$1, 10) < 21) {
+        return null
+      }
+    }
+
+    window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL
+    return userMedia && !!mediaDevices && !!window.URL
+  }
+
   start () {
     this.userMedia = this._userMedia === undefined ? this.userMedia : this._userMedia
-
-    if (this.userMedia) {
-      // ask user for access to their camera
-      this.mediaDevices.getUserMedia({
-        audio: false,
-        video: true
-      })
-      .then((stream) => {
-        this.updateState({
-          videoStream: stream,
-          cameraReady: true
+    return new Promise((resolve, reject) => {
+      if (this.userMedia) {
+        // ask user for access to their camera
+        this.mediaDevices.getUserMedia({
+          audio: false,
+          video: true
         })
-      })
-      .catch((err) => {
-        if (this.opts.enableFlash && this.detectFlash()) {
-          // setTimeout(() => {
-          //   this.opts.forceFlash = 1
-          //   this.attach(elem)
-          // }, 1)
-        } else {
-          console.log('Error:', err)
-        }
-      })
-    } else if (this.opts.enableFlash && this.detectFlash()) {
-      // flash fallback
-      // needed for flash-to-js interface
-      window.Webcam = Webcam
-      this.updateState({
-        useTheFlash: true
-      })
-      // elem.appendChild(div)
-    } else {
-      console.log('There was a problem!')
-    }
+        .then((stream) => {
+          this.stream = stream
+          return resolve(stream)
+        })
+        .catch((err) => {
+          return reject(err)
+        })
+      }
+    })
   }
 
   /**
@@ -117,7 +114,7 @@ export default class Webcam {
     const FLASH_MIME_TYPE = 'application/x-shockwave-flash'
     const win = window
     const nav = navigator
-    const hasFlash = false
+    let hasFlash = false
 
     if (typeof nav.plugins !== 'undefined' && typeof nav.plugins[SHOCKWAVE_FLASH] === 'object') {
       var desc = nav.plugins[SHOCKWAVE_FLASH].description
@@ -288,7 +285,8 @@ export default class Webcam {
   /**
    * Takes a snapshot and displays it in a canvas.
    */
-  generateImage (video, canvas, opts) {
+  getImage (video, opts) {
+    var canvas = document.createElement('canvas')
     canvas.width = video.videoWidth
     canvas.height = video.videoHeight
     canvas.getContext('2d').drawImage(video, 0, 0)
@@ -312,7 +310,7 @@ export default class Webcam {
       mimeType: 'image/jpeg'
     }
 
-    const image = this.generateImage(video, canvas, opts)
+    const image = this.getImage(video, canvas, opts)
 
     const tagFile = {
       source: this.id,

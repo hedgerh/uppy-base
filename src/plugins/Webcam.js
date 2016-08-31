@@ -13,24 +13,7 @@ export default class Webcam {
       enableFlash: true
     }
 
-    this.params = {
-      swfURL: 'webcam.swf',
-      width: 400,
-      height: 300,
-      dest_width: 800,         // size of captured image
-      dest_height: 600,        // these default to width/height
-      image_format: 'jpeg',  // image format (may be jpeg or png)
-      jpeg_quality: 90,      // jpeg image quality from 0 (worst) to 100 (best)
-      enable_flash: true,    // enable flash fallback,
-      force_flash: false,    // force flash mode,
-      flip_horiz: false,     // flip image horiz (mirror mode)
-      fps: 30,               // camera frames per second
-      upload_name: 'webcam', // name of file in upload post data
-      constraints: null,     // custom user media constraints,
-      flashNotDetectedText: 'ERROR: No Adobe Flash Player detected.  Webcam.js relies on Flash for browsers that do not support getUserMedia (like yours).',
-      noInterfaceFoundText: 'No supported webcam interface found.',
-      unfreeze_snap: true    // Whether to unfreeze the camera after snap (defaults to true)
-    }
+    this.params = opts.params
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
@@ -38,9 +21,7 @@ export default class Webcam {
     // Camera controls
     this.init = this.init.bind(this)
     this.start = this.start.bind(this)
-    this.stopWebcam = this.stopWebcam.bind(this)
-    this.startRecording = this.startRecording.bind(this)
-    this.stopRecording = this.stopRecording.bind(this)
+    this.stop = this.stop.bind(this)
     this.takeSnapshot = this.takeSnapshot.bind(this)
     this.generateImage = this.generateImage.bind(this)
     this.getSWFHTML = this.getSWFHTML.bind(this)
@@ -235,7 +216,7 @@ export default class Webcam {
   /**
    * Stops the webcam capture and video playback.
    */
-  stopWebcam () {
+  stop () {
     let { video, videoStream } = this
 
     this.updateState({

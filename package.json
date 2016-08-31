@@ -1,5 +1,5 @@
 {
-  "name": "uppy-base",
+  "name": "uppy-thin",
   "version": "0.0.1",
   "description": "Razor thin uppy module",
   "main": "index.js",
@@ -8,12 +8,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hedgerh/experimental-project.git"
+    "url": "git+https://github.com/hedgerh/uppy-thin.git"
   },
   "author": "Harry Hedger",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/hedgerh/experimental-project/issues"
+    "url": "https://github.com/hedgerh/uppy-thin/issues"
   },
-  "homepage": "https://github.com/hedgerh/experimental-project#readme"
+  "homepage": "https://github.com/hedgerh/uppy-thin#readme"
 }

@@ -1,7 +1,5 @@
-var _userMedia
-
 /**
- * Webcam
+ * Webcam Plugin
  */
 export default class Webcam {
   constructor (opts) {
@@ -19,9 +17,11 @@ export default class Webcam {
     this.opts = Object.assign({}, defaultOptions, opts)
 
     // Camera controls
-    this.init = this.init.bind(this)
     this.start = this.start.bind(this)
+    this.init = this.init.bind(this)
     this.stop = this.stop.bind(this)
+    // this.startRecording = this.startRecording.bind(this)
+    // this.stopRecording = this.stopRecording.bind(this)
     this.takeSnapshot = this.takeSnapshot.bind(this)
     this.generateImage = this.generateImage.bind(this)
     this.getSWFHTML = this.getSWFHTML.bind(this)
@@ -60,10 +60,15 @@ export default class Webcam {
         this.reset()
       })
     }
+
+    return {
+      mediaDevices: this.mediaDevices,
+      userMedia: this.userMedia
+    }
   }
 
   start () {
-    this.userMedia = _userMedia === undefined ? this.userMedia : _userMedia
+    this.userMedia = this._userMedia === undefined ? this.userMedia : this._userMedia
 
     if (this.userMedia) {
       // ask user for access to their camera
@@ -107,12 +112,12 @@ export default class Webcam {
    * @return {bool} flash supported
    */
   detectFlash () {
-    var SHOCKWAVE_FLASH = 'Shockwave Flash'
-    var SHOCKWAVE_FLASH_AX = 'ShockwaveFlash.ShockwaveFlash'
-    var FLASH_MIME_TYPE = 'application/x-shockwave-flash'
-    var win = window
-    var nav = navigator
-    var hasFlash = false
+    const SHOCKWAVE_FLASH = 'Shockwave Flash'
+    const SHOCKWAVE_FLASH_AX = 'ShockwaveFlash.ShockwaveFlash'
+    const FLASH_MIME_TYPE = 'application/x-shockwave-flash'
+    const win = window
+    const nav = navigator
+    const hasFlash = false
 
     if (typeof nav.plugins !== 'undefined' && typeof nav.plugins[SHOCKWAVE_FLASH] === 'object') {
       var desc = nav.plugins[SHOCKWAVE_FLASH].description

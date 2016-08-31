@@ -8,6 +8,8 @@ import EventEmitter from 'events'
  */
 export default class Tus10 extends EventEmitter {
   constructor (core, opts) {
+    super()
+
     // set default options
     const defaultOptions = {
       resume: true,
@@ -72,7 +74,7 @@ export default class Tus10 extends EventEmitter {
  * @returns {Promise}
  */
   upload (file, current, total) {
-    this.core.log(`uploading ${current} of ${total}`)
+    // this.core.log(`uploading ${current} of ${total}`)
 
     // Create a new tus upload
     return new Promise((resolve, reject) => {

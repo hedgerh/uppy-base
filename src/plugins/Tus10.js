@@ -1,3 +1,5 @@
+'use strict'
+
 import tus from 'tus-js-client'
 import UppySocket from '../utils/UppySocket'
 import EventEmitter from 'events'
@@ -66,6 +68,8 @@ export default class Tus10 extends EventEmitter {
           reject('Failed because: ' + err)
         },
         onProgress: (bytesUploaded, bytesTotal) => {
+          console.log('progress:')
+          console.log(bytesUploaded / bytesTotal)
           // Dispatch progress event
           this.emit('progress', {
             uploader: this,
@@ -75,6 +79,7 @@ export default class Tus10 extends EventEmitter {
           })
         },
         onSuccess: () => {
+          console.log('success!')
           this.emit('success', file.id, upload.url)
           resolve(upload)
         }

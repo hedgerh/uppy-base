@@ -1,10 +1,23 @@
+'use strict'
+
+const _getName = (id) => {
+  return id.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')
+}
+
 export default class Provider {
   constructor (opts) {
     this.opts = opts
+    this.provider = opts.provider
+    this.id = this.provider
+    this.name = this.opts.name || _getName(this.id)
   }
 
-  list (directory) {
-    return fetch(`${this.opts.host}/${this.opts.provider}/list?dir=${directory}`, {
+  auth () {
+
+  }
+
+  list (directory = 'root') {
+    return fetch(`${this.host}/${this.provider}/list?dir=${directory}`, {
       method: 'get',
       credentials: 'include',
       headers: {
@@ -12,10 +25,11 @@ export default class Provider {
         'Content-Type': 'application/json'
       }
     })
+    .then(res => res)
   }
 
-  logout (redirect) {
-    return fetch(`${this.opts.host}/${this.opts.provider}/logout?redirect=${redirect}`, {
+  logout (redirect = location.href) {
+    return fetch(`${this.host}/${this.provider}/logout?redirect=${redirect}`, {
       method: 'get',
       credentials: 'include',
       headers: {

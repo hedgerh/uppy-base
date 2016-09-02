@@ -1,10 +1,12 @@
+'use strict'
+
 import dataURItoFile from '../utils/dataURItoFile'
 
 /**
  * Webcam Plugin
  */
 export default class Webcam {
-  constructor (opts, params) {
+  constructor (opts = {}, params = {}) {
     this._userMedia
     this.userMedia = true
     this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
@@ -14,7 +16,26 @@ export default class Webcam {
       enableFlash: true
     }
 
-    this.params = params
+    const defaultParams = {
+      swfURL: 'webcam.swf',
+      width: 400,
+      height: 300,
+      dest_width: 800,         // size of captured image
+      dest_height: 600,        // these default to width/height
+      image_format: 'jpeg',  // image format (may be jpeg or png)
+      jpeg_quality: 90,      // jpeg image quality from 0 (worst) to 100 (best)
+      enable_flash: true,    // enable flash fallback,
+      force_flash: false,    // force flash mode,
+      flip_horiz: false,     // flip image horiz (mirror mode)
+      fps: 30,               // camera frames per second
+      upload_name: 'webcam', // name of file in upload post data
+      constraints: null,     // custom user media constraints,
+      flashNotDetectedText: 'ERROR: No Adobe Flash Player detected.  Webcam.js relies on Flash for browsers that do not support getUserMedia (like yours).',
+      noInterfaceFoundText: 'No supported webcam interface found.',
+      unfreeze_snap: true    // Whether to unfreeze the camera after snap (defaults to true)
+    }
+
+    this.params = Object.assign({}, defaultParams, params)
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)

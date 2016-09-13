@@ -113,7 +113,6 @@ export default class Webcam {
           video: true
         })
         .then((stream) => {
-          this.stream = stream
           return resolve(stream)
         })
         .catch((err) => {

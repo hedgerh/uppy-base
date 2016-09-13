@@ -115,7 +115,8 @@ export default class Tus10 extends EventEmitter {
 
   uploadRemote (file, current, total) {
     return new Promise((resolve, reject) => {
-      fetch(file.remote.url, {
+      const remoteHost = this.opts.remoteHost ? this.opts.remoteHost : file.remote.host
+      fetch(`${remoteHost}/${file.remote.provider}/get`, {
         method: 'post',
         credentials: 'include',
         headers: {
@@ -136,7 +137,7 @@ export default class Tus10 extends EventEmitter {
         .then((data) => {
           // get the host domain
           var regex = /^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)/
-          var host = regex.exec(file.remote.host)[1]
+          var host = regex.exec(remoteHost)[1]
 
           var token = data.token
           var socket = new UppySocket({
@@ -147,6 +148,7 @@ export default class Tus10 extends EventEmitter {
             const {progress, bytesUploaded, bytesTotal} = progressData
 
             if (progress) {
+              console.log(progress)
               // Dispatch progress event
               this.emit('progress', {
                 uploader: this,

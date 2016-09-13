@@ -13,11 +13,24 @@ export default class Provider {
   }
 
   auth () {
-
+    return fetch(`${this.opts.host}/${this.provider}/authorize`, {
+      method: 'get',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application.json'
+      }
+    })
+    .then(res => {
+      return res.json()
+      .then((payload) => {
+        return payload.isAuthenticated
+      })
+    })
   }
 
   list (directory = 'root') {
-    return fetch(`${this.host}/${this.provider}/list?dir=${directory}`, {
+    return fetch(`${this.opts.host}/${this.provider}/list?dir=${directory}`, {
       method: 'get',
       credentials: 'include',
       headers: {
@@ -25,11 +38,11 @@ export default class Provider {
         'Content-Type': 'application/json'
       }
     })
-    .then(res => res)
+    .then(res => res.json())
   }
 
   logout (redirect = location.href) {
-    return fetch(`${this.host}/${this.provider}/logout?redirect=${redirect}`, {
+    return fetch(`${this.opts.host}/${this.provider}/logout?redirect=${redirect}`, {
       method: 'get',
       credentials: 'include',
       headers: {

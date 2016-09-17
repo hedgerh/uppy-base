@@ -1,7 +1,7 @@
 'use strict'
 
 const _getName = (id) => {
-  return id.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')
+  return id.split('-').map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')
 }
 
 export default class Provider {
@@ -21,7 +21,7 @@ export default class Provider {
         'Content-Type': 'application.json'
       }
     })
-    .then(res => {
+    .then((res) => {
       return res.json()
       .then((payload) => {
         return payload.isAuthenticated
@@ -38,7 +38,7 @@ export default class Provider {
         'Content-Type': 'application/json'
       }
     })
-    .then(res => res.json())
+    .then((res) => res.json())
   }
 
   logout (redirect = location.href) {

@@ -54,6 +54,17 @@ export default class Webcam {
     this.getMediaDevices = this.getMediaDevices.bind(this)
   }
 
+  getInitialState () {
+    return {
+      webcam: {
+        stream: null,
+        start: this.startWebcam,
+        stop: this.stopWebcam,
+        takeSnapshot: this.takeSnapshot
+      }
+    }
+  }
+
   /**
    * Checks for getUserMedia support
    */

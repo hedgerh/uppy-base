@@ -4,16 +4,31 @@ const _getName = (id) => {
   return id.split('-').map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')
 }
 
-export default class Provider {
+export default class Remote extends EventEmitter {
   constructor (opts) {
+    super (opts)
     this.opts = opts
-    this.provider = opts.provider
-    this.id = this.provider
+    this.id = opts.provider
     this.name = this.opts.name || _getName(this.id)
   }
 
+  getInitialState () {
+    return {
+      [this.id]: {
+        id: this.id,
+        name: this.name,
+        files: {},
+        authed: false,
+        authURL: `${this.opts.host}/connect/${this.id}`,
+        auth: this.auth,
+        list: this.list,
+        logout: this.logout
+      }
+    }
+  }
+
   auth () {
-    return fetch(`${this.opts.host}/${this.provider}/authorize`, {
+    return fetch(`${this.opts.host}/${this.id}/authorize`, {
       method: 'get',
       credentials: 'include',
       headers: {
@@ -30,7 +45,7 @@ export default class Provider {
   }
 
   list (directory = 'root') {
-    return fetch(`${this.opts.host}/${this.provider}/list?dir=${directory}`, {
+    return fetch(`${this.opts.host}/${this.id}/list?dir=${directory}`, {
       method: 'get',
       credentials: 'include',
       headers: {
@@ -42,7 +57,7 @@ export default class Provider {
   }
 
   logout (redirect = location.href) {
-    return fetch(`${this.opts.host}/${this.provider}/logout?redirect=${redirect}`, {
+    return fetch(`${this.opts.host}/${this.id}/logout?redirect=${redirect}`, {
       method: 'get',
       credentials: 'include',
       headers: {
